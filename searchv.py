@@ -25,11 +25,19 @@ for keyword in keywords:
         print(e)
         sys.exit(1)
 
-    cr = csv.reader(result.text.splitlines(), delimiter=';')
-    next(cr, None)  # skip the headers
-    
+    volume = None 
     writer = csv.writer(open("volumes.csv", "a", newline=''), delimiter=';')
-    for row in cr:
-        writer.writerow([row[0], row[1]])
+     
+    if result.text == 'ERROR 50 :: NOTHING FOUND':
+        volume = ""
+        writer.writerow([keyword[0], volume])  
+    else:
+        cr = csv.reader(result.text.splitlines(), delimiter=';')
+        next(cr, None)  # skip the headers
+        for row in cr:
+            volume = row[1]
+            writer.writerow([keyword[0], volume]) 
+
+    print(keyword[0] + " : " + volume)
 
     sleep(0.2) # No more 10 SEMRUSH API Requests / second (see : https://fr.semrush.com/api-terms/)
